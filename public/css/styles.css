@@ -1,7 +1,7 @@
 :root{
   --bg:#f4f5f7; --surface:#ffffff; --surface-2:#fbfbfc; --border:#e2e5ea; --border-strong:#cfd4dc;
   --ink:#1f2430; --ink-2:#4a515e; --ink-3:#7a828f;
-  --brand:#0a3d91; --brand-2:#1257ad; --accent:#0e7c86;
+  --brand:#005090; --brand-2:#0a63ad; --accent:#0e7c86;
   --ok:#1a7f5a; --warn:#c98a1b; --bad:#c0392b; --info:#3b82a0;
   --radius:8px; --shadow:0 1px 2px rgba(20,28,45,.06), 0 4px 14px rgba(20,28,45,.05);
   font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
@@ -20,12 +20,11 @@ input,select,textarea{font-family:inherit;font-size:14px}
 .sidebar .logo .brandline{display:flex;flex-direction:column;line-height:1.15}
 .sidebar .logo .brandline small{font-size:10.5px;font-weight:500;color:#aec4e8;letter-spacing:.06em;text-transform:uppercase}
 
-/* ---------- Logo YPF (SVG wordmark) ---------- */
-.ypf-mark{display:block;background:#fff;border-radius:3px;padding:5px 7px}
-.ypf-mark svg{display:block;height:16px;width:auto}
-.ypf-mark.lg svg{height:34px}
-.ypf-mark.plain{background:transparent;padding:0}
-.ypf-mark.plain svg{height:44px}
+/* ---------- Logo YPF ---------- */
+.ypf-mark{display:block}
+.ypf-mark img{display:block;height:20px;width:auto}
+.ypf-mark.lg img{height:34px}
+.ypf-mark.plain img{height:40px}
 .nav-link{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:6px;color:#c6d6e2;font-weight:500}
 .nav-link:hover{background:rgba(255,255,255,.08);color:#fff}
 .nav-link.active{background:#fff;color:var(--brand)}

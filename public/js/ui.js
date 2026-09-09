@@ -72,15 +72,11 @@ export function confirmModal(title, message, onYes, yesLabel = 'Confirmar', yesC
 
 export function spinner() { return h('div', { class: 'spinner' }); }
 
-/** Logotipo YPF (wordmark). variant: 'box' (blanco sobre azul) | 'lg' | 'plain' (blanco). */
+/** Logotipo YPF (letras blancas, fondo transparente). variant: 'box' | 'lg' | 'plain'. */
 export function ypfLogo(variant = 'box') {
   const cls = 'ypf-mark' + (variant === 'lg' ? ' lg' : variant === 'plain' ? ' plain' : '');
-  const fill = variant === 'plain' ? '#ffffff' : '#0a3d91';
-  const svg = `<svg viewBox="0 0 132 44" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="YPF">
-    <text x="0" y="35" fill="${fill}" font-family="'Roboto Slab',Rockwell,'Roboto Slab',Georgia,serif"
-      font-weight="800" font-size="44" letter-spacing="1.5">YPF</text>
-  </svg>`;
-  return h('span', { class: cls, html: svg });
+  return h('span', { class: cls },
+    h('img', { src: '/assets/ypf-logo-white.png', alt: 'YPF', width: 100, height: 40 }));
 }
 
 export function mount(node) {
