@@ -1,7 +1,7 @@
 :root{
   --bg:#f4f5f7; --surface:#ffffff; --surface-2:#fbfbfc; --border:#e2e5ea; --border-strong:#cfd4dc;
   --ink:#1f2430; --ink-2:#4a515e; --ink-3:#7a828f;
-  --brand:#0b3d5c; --brand-2:#12557d; --accent:#0e7c86;
+  --brand:#0a3d91; --brand-2:#1257ad; --accent:#0e7c86;
   --ok:#1a7f5a; --warn:#c98a1b; --bad:#c0392b; --info:#3b82a0;
   --radius:8px; --shadow:0 1px 2px rgba(20,28,45,.06), 0 4px 14px rgba(20,28,45,.05);
   font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
@@ -16,8 +16,16 @@ input,select,textarea{font-family:inherit;font-size:14px}
 /* ---------- Layout ---------- */
 .app-shell{display:grid;grid-template-columns:238px 1fr;min-height:100vh}
 .sidebar{background:var(--brand);color:#dce8f0;display:flex;flex-direction:column;padding:20px 14px;gap:6px}
-.sidebar .logo{display:flex;align-items:center;gap:10px;padding:6px 8px 18px;font-weight:700;color:#fff;font-size:16px;letter-spacing:.02em}
-.sidebar .logo span{background:#fff;color:var(--brand);border-radius:6px;padding:3px 7px;font-size:13px}
+.sidebar .logo{display:flex;align-items:center;gap:11px;padding:4px 8px 18px;font-weight:600;color:#fff;font-size:15px;letter-spacing:.03em}
+.sidebar .logo .brandline{display:flex;flex-direction:column;line-height:1.15}
+.sidebar .logo .brandline small{font-size:10.5px;font-weight:500;color:#aec4e8;letter-spacing:.06em;text-transform:uppercase}
+
+/* ---------- Logo YPF (SVG wordmark) ---------- */
+.ypf-mark{display:block;background:#fff;border-radius:3px;padding:5px 7px}
+.ypf-mark svg{display:block;height:16px;width:auto}
+.ypf-mark.lg svg{height:34px}
+.ypf-mark.plain{background:transparent;padding:0}
+.ypf-mark.plain svg{height:44px}
 .nav-link{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:6px;color:#c6d6e2;font-weight:500}
 .nav-link:hover{background:rgba(255,255,255,.08);color:#fff}
 .nav-link.active{background:#fff;color:var(--brand)}
@@ -105,8 +113,14 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 .meter .pct{font-variant-numeric:tabular-nums;font-weight:600;min-width:44px;text-align:right}
 
 /* ---------- Login ---------- */
-.login-wrap{min-height:100vh;display:grid;place-items:center;background:linear-gradient(135deg,#0b3d5c,#12557d)}
-.login-card{background:#fff;border-radius:12px;padding:34px 32px;width:370px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.login-wrap{min-height:100vh;display:grid;place-items:center;padding:24px;position:relative;overflow:hidden;
+  background:#0a3d91 url('/assets/login-bg.jpg') center/cover no-repeat}
+.login-wrap::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,32,74,.55),rgba(8,32,74,.82))}
+.login-inner{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:22px}
+.login-brand{display:flex;align-items:center;gap:14px;color:#fff}
+.login-brand .brandtxt{font-size:15px;font-weight:500;letter-spacing:.04em}
+.login-brand .brandtxt b{display:block;font-size:18px;font-weight:700;letter-spacing:0}
+.login-card{background:#fff;border-radius:12px;padding:34px 32px;width:370px;max-width:100%;box-shadow:0 24px 70px rgba(0,0,0,.45)}
 .login-card h1{font-size:19px;margin-bottom:4px}
 .login-card p.sub{color:var(--ink-3);margin:0 0 22px}
 .login-card .err{background:#fdecea;color:var(--bad);padding:8px 11px;border-radius:6px;font-size:13px;margin-bottom:12px}

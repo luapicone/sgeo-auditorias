@@ -1,5 +1,5 @@
 import { api, session } from '../api.js';
-import { h, mount } from '../ui.js';
+import { h, mount, ypfLogo } from '../ui.js';
 
 export function renderLogin() {
   const err = h('div', { class: 'err', style: 'display:none' });
@@ -33,5 +33,9 @@ export function renderLogin() {
     }
   }
 
-  mount(h('div', { class: 'login-wrap' }, form));
+  mount(h('div', { class: 'login-wrap' },
+    h('div', { class: 'login-inner' },
+      h('div', { class: 'login-brand' }, ypfLogo('plain'),
+        h('span', { class: 'brandtxt' }, 'Excelencia Operacional', h('b', {}, 'SGEO · Auditorías'))),
+      form)));
 }

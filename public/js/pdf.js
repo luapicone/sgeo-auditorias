@@ -1,16 +1,23 @@
 import { ESTADO_COLOR, VAL_LABEL } from './ui.js';
 
-const BRAND = [11, 61, 92];
+const BRAND = [10, 61, 145];
 const fmtPct = (x) => (x == null ? '—' : (x * 100).toFixed(1) + '%');
 
 function header(doc, titulo, subtitulo) {
+  const w = doc.internal.pageSize.getWidth();
   doc.setFillColor(...BRAND);
-  doc.rect(0, 0, doc.internal.pageSize.getWidth(), 26, 'F');
+  doc.rect(0, 0, w, 26, 'F');
+  // Sello YPF sobre recuadro blanco
+  doc.setFillColor(255, 255, 255);
+  doc.roundedRect(12, 6, 20, 14, 1.5, 1.5, 'F');
+  doc.setTextColor(...BRAND);
+  doc.setFont('times', 'bold'); doc.setFontSize(14);
+  doc.text('YPF', 22, 16, { align: 'center' });
   doc.setTextColor(255);
-  doc.setFont('helvetica', 'bold'); doc.setFontSize(13);
-  doc.text('SGEO · Sistema de Gestión de Excelencia Operacional', 14, 11);
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(12);
+  doc.text('SGEO · Sistema de Gestión de Excelencia Operacional', 37, 11);
   doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
-  doc.text(titulo + (subtitulo ? '  —  ' + subtitulo : ''), 14, 19);
+  doc.text(titulo + (subtitulo ? '  —  ' + subtitulo : ''), 37, 19);
   doc.setTextColor(30);
 }
 

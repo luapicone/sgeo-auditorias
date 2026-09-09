@@ -1,5 +1,5 @@
 import { api, session } from './api.js';
-import { h, mount, spinner } from './ui.js';
+import { h, mount, spinner, ypfLogo } from './ui.js';
 import { renderLogin } from './views/login.js';
 import { renderDashboard } from './views/dashboard.js';
 import { renderNuevaAuditoria } from './views/nueva.js';
@@ -24,7 +24,8 @@ function shell(active, content) {
 
   return h('div', { class: 'app-shell' },
     h('aside', { class: 'sidebar' },
-      h('div', { class: 'logo' }, h('span', {}, 'SGEO'), 'Auditorías'),
+      h('div', { class: 'logo' }, ypfLogo('box'),
+        h('span', { class: 'brandline' }, 'SGEO', h('small', {}, 'Auditorías'))),
       ...nav,
       h('div', { class: 'spacer' }),
       h('div', { class: 'user-box' },
