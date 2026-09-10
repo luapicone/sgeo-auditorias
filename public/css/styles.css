@@ -100,7 +100,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 .val-group button:last-child{border-right:0}
 .val-group button:hover{background:var(--surface-2)}
 .val-group button.on[data-v=C]{background:var(--ok);color:#fff}
-.val-group button.on[data-v=PC]{background:var(--warn);color:#fff}
+.val-group button.on[data-v=CP]{background:var(--warn);color:#fff}
 .val-group button.on[data-v=NC]{background:var(--bad);color:#fff}
 .val-group button.on[data-v=NA]{background:var(--ink-3);color:#fff}
 

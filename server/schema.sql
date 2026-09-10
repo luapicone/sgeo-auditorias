@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS audits (
 CREATE TABLE IF NOT EXISTS audit_items (
   audit_id    INTEGER NOT NULL REFERENCES audits(id) ON DELETE CASCADE,
   se          INTEGER NOT NULL,
-  valoracion  TEXT CHECK (valoracion IN ('C','PC','NC','NA')),
+  valoracion  TEXT CHECK (valoracion IN ('C','CP','NC','NA')),
   observacion TEXT,
   updated_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
   PRIMARY KEY (audit_id, se)

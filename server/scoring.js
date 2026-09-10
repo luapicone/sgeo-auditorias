@@ -6,42 +6,44 @@
  * ─────────────────────────────────────────────────────────────────────────────
  * EQUIVALENCIA CON LAS COLUMNAS / FÓRMULAS DEL EXCEL
  * ─────────────────────────────────────────────────────────────────────────────
- *  Columna N  "VALORACIÓN"            -> valoracion del ítem: "C" | "PC" | "NC" | "NA"
+ *  Columna N  "VALORACIÓN"            -> "C" | "CP" | "NC" | "NA"
  *  Columna M  "PONDERACIÓN INICIAL"   -> siempre 1 (peso del subelemento dentro del elemento)
  *  Columna S  "EVALUACIÓN FINAL"      -> S(v):
- *                 =IF(N="C",100%,IF(N="PC",30%,IF(N="NC",0%,IF(N="NA","-",""))))
- *             C=1.0 · PC=0.3 · NC=0.0 · NA/""=0 en el numerador
- *  Columna T  "% DE LOGRO DEL CAPÍTULO"
+ *                 =IF(N="C",100%,IF(N="CP",30%,IF(N="NC",0%,IF(N="NA","-",""))))
+ *             C=1.0 · CP=0.3 · NC=0.0 · NA/""=0 en el numerador
+ *  Columna T  "% DE LOGRO DEL ELEMENTO"
  *                 =(SUM(S del elemento) / SUM(M del elemento))
- *  Columna U  "ESTADO DEL CAPÍTULO"
+ *  Columna U  "ESTADO DEL ELEMENTO"
  *                 =IF(T>=91%,"Mantener",IF(T>=81%,"Optimizar",IF(T>=61%,"Mejorar",
  *                   IF(T>=41%,"Implementar","Crítico"))))
- *  Columna L  "PUNTAJE DEL CAPÍTULO"  -> peso del elemento (E1=15, E2=15, E3=15, E4=35, E5=20; suma 100)
- *  Columna V  "PUNTAJE DEL CAPÍTULO"  -> =L * T
+ *  Columna L  "PUNTAJE DEL ELEMENTO"  -> peso del elemento (E1=15, E2=15, E3=15, E4=35, E5=20; suma 100)
+ *  Columna V  "PUNTAJE DEL ELEMENTO"  -> =L * T
  *  Columna W  "TOTAL AUDITORÍA"       -> =(V_E1 + V_E2 + V_E3 + V_E4 + V_E5) / 100
+ *
+ * FASES PDCA: la columna A agrupa los subelementos en PLANIFICAR / HACER / VERIFICAR / ACTUAR.
+ * El Excel no calcula un puntaje por fase; acá se agrega como vista, repartiendo el peso de
+ * cada elemento en partes iguales entre sus subelementos (la suma por fase = suma por elemento).
  *
  * EXTENSIONES (no definidas en el Excel, que asume las 27 filas completas):
  *  - Alcance parcial: un subelemento NO seleccionado se excluye del numerador Y del
- *    denominador (no forma parte de la auditoría). Un subelemento seleccionado pero
- *    todavía sin valorar cuenta como 0 en el numerador y 1 en el denominador
- *    (idéntico a una celda N vacía en el Excel).
- *  - Total auditoría con alcance parcial: se re-normaliza dividiendo por la suma de los
- *    pesos L de los elementos incluidos, en vez de por 100 fijo. Con las 27 filas en
- *    alcance el resultado es idéntico al Excel (la suma de L es 100).
- *  - "Estado" del total de auditoría y de cada fase PDCA: se reutilizan los mismos
- *    umbrales de la columna U (el Excel no calcula un estado global).
- *  - NA ("No aplica"): el Excel lo trata como 0 en el numerador pero lo mantiene en el
- *    denominador (M=1), es decir, penaliza. Se respeta ese comportamiento.
+ *    denominador. Un subelemento seleccionado sin valorar cuenta 0 en el numerador y 1 en
+ *    el denominador (idéntico a una celda N vacía en el Excel).
+ *  - Total con alcance parcial: se re-normaliza por la suma de los pesos L de los elementos
+ *    incluidos (con las 27 filas el divisor es 100, idéntico al Excel).
+ *  - "Estado" del total y de cada fase PDCA: se reutilizan los umbrales de la columna U.
+ *  - NA ("No aplica"): 0 en el numerador y 1 en el denominador (penaliza), igual que el Excel.
  */
 
-export const ESCALA = { C: 1.0, PC: 0.3, NC: 0.0, NA: 0.0 };
+export const ESCALA = { C: 1.0, CP: 0.3, NC: 0.0, NA: 0.0 };
 
 export const VALORACIONES = [
   { code: 'C', label: 'Cumple' },
-  { code: 'PC', label: 'Cumple parcialmente' },
+  { code: 'CP', label: 'Cumple parcialmente' },
   { code: 'NC', label: 'No cumple' },
   { code: 'NA', label: 'No aplica' },
 ];
+
+export const FASES_PDCA = ['PLANIFICAR', 'HACER', 'VERIFICAR', 'ACTUAR'];
 
 /** Réplica de la columna U del Excel. */
 export function estadoDesdeLogro(t) {
@@ -73,7 +75,6 @@ export function evaluacionFinal(valoracion) {
  *
  * @param {object} estructura  Contenido de server/data/estructura-sgeo.json
  * @param {Array<{se:number, valoracion:string|null}>} items  Ítems EN ALCANCE.
- *        Cada item.se debe existir en la estructura. valoracion null = pendiente.
  * @returns {object} resultado con desglose por subelemento, elemento, fase PDCA y total.
  */
 export function calcularResultado(estructura, items) {
@@ -81,9 +82,12 @@ export function calcularResultado(estructura, items) {
   for (const it of items) enAlcance.set(Number(it.se), it.valoracion || null);
 
   const elementos = [];
-  const fases = new Map(); // pdca -> { puntajeObtenido, pesoIncluido }
+  const fases = new Map(); // pdca -> { logroNum, logroDen, puntaje, peso }
 
   for (const el of estructura.elementos) {
+    const pesoEl = el.puntajeElemento;
+    const pesoSub = el.subelementos.length ? pesoEl / el.subelementos.length : 0;
+
     const subs = [];
     let sumaS = 0;      // SUM(S) del elemento
     let denom = 0;      // SUM(M) del elemento = nº de subelementos en alcance
@@ -98,50 +102,55 @@ export function calcularResultado(estructura, items) {
       subs.push({
         se: sub.se,
         detalle: sub.detalle,
-        valoracion: valoracion,
+        pdca: sub.pdca,
+        valoracion,
         evaluacionFinal: valoracion ? s : null,
       });
+
+      // aporte a la fase PDCA del subelemento
+      const f = fases.get(sub.pdca) || { pdca: sub.pdca, logroNum: 0, logroDen: 0, puntaje: 0, peso: 0 };
+      f.logroDen += 1;
+      f.peso += pesoSub;
+      if (valoracion) { f.logroNum += s; f.puntaje += pesoSub * s; }
+      fases.set(sub.pdca, f);
     }
 
     if (subs.length === 0) continue; // elemento sin nada en alcance
 
-    const logro = denom > 0 ? sumaS / denom : null;           // T
-    const puntajeCapitulo = logro != null ? el.puntajeCapitulo * logro : 0; // V = L * T
+    const logro = denom > 0 ? sumaS / denom : null;          // T
+    const puntajeElemento = logro != null ? pesoEl * logro : 0; // V = L * T
 
     elementos.push({
       codigo: el.codigo,
       nombre: el.nombre,
       pdca: el.pdca,
-      pesoCapitulo: el.puntajeCapitulo,        // L
+      pesoElemento: pesoEl,                    // L
       logro,                                   // T (0..1)
       estado: estadoDesdeLogro(logro),         // U
-      puntajeCapitulo,                         // V
+      puntajeElemento,                         // V
       totalSubelementos: subs.length,
       subelementosValorados: valorados,
       subelementos: subs,
     });
-
-    const f = fases.get(el.pdca) || { pdca: el.pdca, puntajeObtenido: 0, pesoIncluido: 0 };
-    f.puntajeObtenido += puntajeCapitulo;
-    f.pesoIncluido += el.puntajeCapitulo;
-    fases.set(el.pdca, f);
   }
 
-  const pesoIncluidoTotal = elementos.reduce((a, e) => a + e.pesoCapitulo, 0);
-  const puntajeObtenidoTotal = elementos.reduce((a, e) => a + e.puntajeCapitulo, 0);
-  // W (re-normalizado por peso incluido; con alcance completo el divisor es 100)
+  const pesoIncluidoTotal = elementos.reduce((a, e) => a + e.pesoElemento, 0);
+  const puntajeObtenidoTotal = elementos.reduce((a, e) => a + e.puntajeElemento, 0);
   const totalAuditoria = pesoIncluidoTotal > 0 ? puntajeObtenidoTotal / pesoIncluidoTotal : null;
 
   const totalSub = elementos.reduce((a, e) => a + e.totalSubelementos, 0);
   const totalValorados = elementos.reduce((a, e) => a + e.subelementosValorados, 0);
 
-  const fasesArr = [...fases.values()].map((f) => ({
-    pdca: f.pdca,
-    logro: f.pesoIncluido > 0 ? f.puntajeObtenido / f.pesoIncluido : null,
-    puntaje: f.puntajeObtenido,
-    peso: f.pesoIncluido,
-    estado: estadoDesdeLogro(f.pesoIncluido > 0 ? f.puntajeObtenido / f.pesoIncluido : null),
-  }));
+  const orden = estructura.fasesPDCA || FASES_PDCA;
+  const fasesArr = [...fases.values()]
+    .map((f) => ({
+      pdca: f.pdca,
+      logro: f.logroDen > 0 ? f.logroNum / f.logroDen : null,
+      puntaje: f.puntaje,
+      peso: f.peso,
+      estado: estadoDesdeLogro(f.logroDen > 0 ? f.logroNum / f.logroDen : null),
+    }))
+    .sort((a, b) => orden.indexOf(a.pdca) - orden.indexOf(b.pdca));
 
   return {
     elementos,
@@ -149,7 +158,7 @@ export function calcularResultado(estructura, items) {
     total: {
       logro: totalAuditoria,                       // 0..1  (equivale a W)
       porcentaje: totalAuditoria != null ? totalAuditoria * 100 : null,
-      puntajeSobre100: puntajeObtenidoTotal,       // puntos absolutos (sobre pesoIncluidoTotal)
+      puntajeSobre100: puntajeObtenidoTotal,
       pesoIncluido: pesoIncluidoTotal,
       estado: estadoDesdeLogro(totalAuditoria),
     },

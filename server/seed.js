@@ -36,8 +36,8 @@ function valoracionesPara(nivel, seed) {
   for (const se of TODAS_SES) {
     const p = nivel + (rnd() - 0.5) * 0.5;
     if (p > 0.82) out[se] = 'C';
-    else if (p > 0.55) out[se] = rnd() > 0.4 ? 'C' : 'PC';
-    else if (p > 0.35) out[se] = rnd() > 0.5 ? 'PC' : 'NC';
+    else if (p > 0.55) out[se] = rnd() > 0.4 ? 'C' : 'CP';
+    else if (p > 0.35) out[se] = rnd() > 0.5 ? 'CP' : 'NC';
     else out[se] = rnd() > 0.7 ? 'NA' : 'NC';
   }
   return out;

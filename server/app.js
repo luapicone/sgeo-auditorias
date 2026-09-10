@@ -186,7 +186,7 @@ app.patch('/api/audits/:id/items', auth, wrap(async (req, res) => {
   for (const c of cambios) {
     const se = Number(c.se);
     if (!SES_VALIDOS.has(se)) continue;
-    const val = ['C', 'PC', 'NC', 'NA'].includes(c.valoracion) ? c.valoracion : null;
+    const val = ['C', 'CP', 'NC', 'NA'].includes(c.valoracion) ? c.valoracion : null;
     const obs = c.observacion != null ? String(c.observacion) : null;
     await q(
       `INSERT INTO audit_items (audit_id, se, valoracion, observacion) VALUES ($1,$2,$3,$4)
@@ -240,7 +240,7 @@ app.get('/api/compare', auth, soloJefa, wrap(async (req, res) => {
       total: a.resultado.total, avance: a.resultado.avance, fases: a.resultado.fases,
       elementos: a.resultado.elementos.map((el) => ({
         codigo: el.codigo, nombre: el.nombre, logro: el.logro, estado: el.estado,
-        puntajeCapitulo: el.puntajeCapitulo, pesoCapitulo: el.pesoCapitulo,
+        puntajeElemento: el.puntajeElemento, pesoElemento: el.pesoElemento,
       })),
     })),
   });

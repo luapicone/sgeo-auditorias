@@ -1,7 +1,7 @@
 # Herramienta de Auditorías SGEO
 
 Aplicación web para digitalizar la hoja **«Comparativa SGEO FINAL»** como
-herramienta de auditoría del **Sistema de Gestión de Excelencia Operacional**
+herramienta de auditoría del **Sistema de Gestión de Excelencia Operacional** (SGEO)
 (Modelo de Excelencia Operacional YPF / Modelo YPF 2.0).
 
 El auditor sólo carga la **valoración** de cada requisito (`Cumple` /
@@ -16,13 +16,13 @@ auditorías, las filtra y las compara.
 
 ## 1. Cómo correrla localmente
 
-**Requisitos:** Node.js ≥ 22 (probado en Node 25). No requiere base de datos
-externa ni compilar módulos nativos (usa `node:sqlite`, incluido en Node).
+**Requisitos:** Node.js ≥ 20. En local usa **PGlite** (Postgres embebido en un
+archivo, sin instalar nada); en Vercel usa el **Postgres** que se conecte al proyecto.
 
 ```bash
 cd sgeo-auditorias
-npm install          # express, jsonwebtoken, bcryptjs
-npm run seed         # crea la base SQLite con datos de ejemplo
+npm install          # express, jsonwebtoken, bcryptjs, pg, @electric-sql/pglite
+npm run seed         # crea la base con datos de ejemplo
 npm start            # servidor en http://localhost:4000
 ```
 
@@ -37,8 +37,8 @@ Abrir <http://localhost:4000> e ingresar con alguno de los usuarios de prueba:
 `npm run dev` levanta el servidor con recarga automática. `npm run seed`
 **reinicia** los datos de ejemplo (borra todo y vuelve a crear).
 
-Variables de entorno opcionales: `PORT` (default 4000), `JWT_SECRET`, `SGEO_DB`
-(ruta del archivo SQLite).
+Variables de entorno: `PORT` (default 4000), `JWT_SECRET`, `DATABASE_URL` / `POSTGRES_URL`
+(si se define, usa ese Postgres en vez de PGlite local).
 
 ---
 
@@ -47,20 +47,19 @@ Variables de entorno opcionales: `PORT` (default 4000), `JWT_SECRET`, `SGEO_DB`
 ```
 ┌─────────────────────────────┐        ┌──────────────────────────────┐
 │  Cliente (SPA, vanilla JS)  │  HTTP  │  Servidor (Node + Express)   │
-│  client/                    │ ─────► │  server/                     │
+│  public/  (SPA vanilla JS)  │ ─────► │  server/  (Express)          │
 │  · router por hash          │  JSON  │  · API REST + JWT            │
 │  · Chart.js (gráficos)      │        │  · scoring.js (lógica Excel) │
-│  · jsPDF (PDF individual y   │        │  · node:sqlite (BD)          │
+│  · jsPDF (PDF individual y   │        │  · Postgres / PGlite (BD)    │
 │    comparativo)             │        │  · sirve el cliente estático │
 └─────────────────────────────┘        └──────────────┬───────────────┘
                                                       │
-                                       server/data/sgeo.db (SQLite)
+                                       Postgres (Vercel) / PGlite (local)
                                        server/data/estructura-sgeo.json
 ```
 
-- **Sin build step.** El cliente son módulos ES servidos tal cual; sólo se
-  vendorizan 3 librerías en `client/vendor/` (Chart.js, jsPDF, jsPDF-AutoTable),
-  así funciona sin conexión.
+- **Sin build step.** El cliente son módulos ES servidos tal cual; Chart.js y jsPDF
+  se cargan desde CDN (jsDelivr).
 - **Una sola fuente de verdad para los cálculos:** `server/scoring.js`. El cliente
   nunca recalcula; muestra lo que devuelve la API.
 - La estructura de elementos/subelementos/pesos vive en
@@ -71,14 +70,16 @@ Variables de entorno opcionales: `PORT` (default 4000), `JWT_SECRET`, `SGEO_DB`
 
 ```
 server/
-  index.js         API REST + archivos estáticos
-  db.js            esquema SQLite
+  app.js           app Express (API REST + estáticos)
+  index.js         arranque local · api/index.js = entrypoint Vercel
+  db.js            capa de datos (Postgres / PGlite)
+  schema.sql       esquema
   seed.js          datos de ejemplo (npm run seed)
   scoring.js       réplica de la lógica de la hoja "Comparativa SGEO FINAL"
   data/
     estructura-sgeo.json   estructura + pesos + umbrales (derivado del Excel)
-    sgeo.db                base de datos (se crea sola)
-client/
+    pgdata/                base local PGlite (se crea sola)
+public/
   index.html
   css/styles.css
   js/
@@ -88,7 +89,6 @@ client/
     charts.js      gráficos (Chart.js)
     pdf.js         generación de PDF (jsPDF)
     views/         login, dashboard, nueva, audit, comparar
-  vendor/          Chart.js, jsPDF, jsPDF-AutoTable
 scripts/
   extract-estructura.py       Excel  →  estructura-sgeo.json
   fuente-comparativa-sgeo.xlsx copia del Excel original
@@ -98,14 +98,14 @@ scripts/
 
 ## 3. Modelo de datos
 
-SQLite, 5 tablas (`server/db.js`):
+PostgreSQL, 4 tablas (`server/schema.sql`):
 
 | Tabla | Campos principales | Notas |
 |-------|--------------------|-------|
 | `users` | `username`, `password_hash` (bcrypt), `nombre`, `rol` (`auditor` \| `jefa`) | |
 | `companies` | `nombre`, `sector`, `ubicacion`, `notas` | Empresas auditadas |
 | `audits` | `company_id`, `auditor_id`, `auditor_nombre`, `fecha`, `alcance_texto`, `estado` (`en_progreso` \| `cerrada`), `resultado_json`, `closed_at` | `resultado_json` = snapshot del resultado al cerrar |
-| `audit_items` | `audit_id`, `se`, `valoracion` (`C`/`PC`/`NC`/`NA`, nullable), `observacion` | **La existencia de la fila = subelemento en alcance.** Valoración `null` = pendiente |
+| `audit_items` | `audit_id`, `se`, `valoracion` (`C`/`CP`/`NC`/`NA`, nullable), `observacion` | **La existencia de la fila = subelemento en alcance.** Valoración `null` = pendiente |
 
 **Los puntajes calculados y resultados finales no se guardan denormalizados**: se
 computan en cada request con `scoring.js` a partir de `audit_items` +
@@ -146,7 +146,7 @@ Resumen (el detalle completo, con las fórmulas celda por celda, está en
 [`ANALISIS_EXCEL.md`](ANALISIS_EXCEL.md)):
 
 1. **Valoración → fracción** (columna S del Excel):
-   `C = 1.0`, `PC = 0.3`, `NC = 0.0`, `NA = 0`.
+   `C = 1.0`, `CP = 0.3`, `NC = 0.0`, `NA = 0`.
 2. **% de logro del elemento** (columna T): `Σ fracciones / cantidad de subelementos`
    (cada subelemento pesa 1, columna M).
 3. **Estado** (columna U): umbrales `91 / 81 / 61 / 41 %` →
@@ -158,7 +158,7 @@ Resumen (el detalle completo, con las fórmulas celda por celda, está en
 
 Con las 27 filas cargadas, los resultados de la app son **idénticos** a las celdas
 T/U/V/W del Excel. Lo único que la app agrega (porque el Excel no lo define) es el
-manejo de **alcance parcial** y el **estado global / por fase PDCA** — todo
+manejo de **alcance parcial** y el **estado global / resultado por fase PDCA (4 fases)** — todo
 señalado en `ANALISIS_EXCEL.md` §4.
 
 ### Regenerar la estructura desde el Excel
@@ -201,7 +201,7 @@ Refinería Norte (2026), Petroquímica del Sur (2026) y Terminal Portuaria, y pu
 
 1. *Nueva auditoría* → empresa (se puede crear en el momento), fecha, auditor
    responsable, alcance, y qué elementos/subelementos auditar.
-2. *Carga de valoraciones* → por cada requisito, un clic en `C` / `PC` / `NC` /
+2. *Carga de valoraciones* → por cada requisito, un clic en `C` / `CP` / `NC` /
    `NA` (+ observación opcional). Autoguardado. El avance y el puntaje se
    actualizan en vivo.
 3. *Resultados y avance* → puntaje por subelemento, elemento, fase PDCA y total,
@@ -248,4 +248,4 @@ Esta entrega está pensada para uso interno / demo. Antes de exponerla:
 - Definir `JWT_SECRET` por variable de entorno.
 - Servir por HTTPS.
 - Cambiar las contraseñas de ejemplo y agregar una gestión de usuarios real.
-- Hacer backup del archivo `server/data/sgeo.db`.
+- Hacer backup del archivo el Postgres del proyecto (Vercel → Storage → Backups).

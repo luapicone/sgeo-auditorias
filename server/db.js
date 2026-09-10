@@ -53,6 +53,13 @@ async function makeBackend() {
 async function init() {
   backend = await makeBackend();
   await backend.exec(readFileSync(join(__dirname, 'schema.sql'), 'utf8'));
+  // Migración: valoración "Cumple parcialmente" pasó de "PC" a "CP".
+  await backend.exec(`
+    ALTER TABLE audit_items DROP CONSTRAINT IF EXISTS audit_items_valoracion_check;
+    UPDATE audit_items SET valoracion = 'CP' WHERE valoracion = 'PC';
+    ALTER TABLE audit_items ADD CONSTRAINT audit_items_valoracion_check
+      CHECK (valoracion IN ('C','CP','NC','NA'));
+  `).catch(() => {});
 }
 
 /** Garantiza el esquema una sola vez por instancia. (El sembrado lo hace seed.js.) */

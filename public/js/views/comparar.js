@@ -83,7 +83,7 @@ export async function renderComparar() {
       h('div', { class: 'pad', style: 'padding-bottom:0' }, h('div', { class: 'card-title' }, '% de logro por fase PDCA')),
       h('table', {},
         h('thead', {}, h('tr', {}, h('th', {}, 'Fase'), ...A.map((a) => h('th', { class: 'num' }, a.empresa)))),
-        h('tbody', {}, ...['PLANIFICAR', 'HACER', 'VERIFICAR ACTUAR'].map((f) => h('tr', {},
+        h('tbody', {}, ...['PLANIFICAR', 'HACER', 'VERIFICAR', 'ACTUAR'].map((f) => h('tr', {},
           h('td', {}, f),
           ...A.map((a) => { const x = a.fases.find((z) => z.pdca === f); return h('td', { class: 'num' }, x ? pct(x.logro, 1) : '—'); })))))));
 

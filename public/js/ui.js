@@ -24,7 +24,7 @@ export const ESTADO_COLOR = {
   Mantener: '#1a7f5a', Optimizar: '#3b82a0', Mejorar: '#c98a1b',
   Implementar: '#d9722b', 'Crítico': '#c0392b', '—': '#8a8f98',
 };
-export const VAL_LABEL = { C: 'Cumple', PC: 'Cumple parcialmente', NC: 'No cumple', NA: 'No aplica' };
+export const VAL_LABEL = { C: 'Cumple', CP: 'Cumple parcialmente', NC: 'No cumple', NA: 'No aplica' };
 
 export function estadoBadge(estado) {
   return h('span', { class: 'badge estado', style: `background:${ESTADO_COLOR[estado] || '#8a8f98'}` }, estado || '—');

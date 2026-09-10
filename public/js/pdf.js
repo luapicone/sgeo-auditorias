@@ -84,8 +84,8 @@ export function pdfAuditoria(audit) {
     startY: y + 3,
     head: [['Cód.', 'Elemento', 'Fase PDCA', 'Peso', '% Logro', 'Puntaje', 'Estado', 'Valorados']],
     body: r.elementos.map((e) => [
-      e.codigo, e.nombre, e.pdca, e.pesoCapitulo, fmtPct(e.logro),
-      e.puntajeCapitulo.toFixed(1), e.estado, `${e.subelementosValorados}/${e.totalSubelementos}`,
+      e.codigo, e.nombre, e.pdca, e.pesoElemento, fmtPct(e.logro),
+      e.puntajeElemento.toFixed(1), e.estado, `${e.subelementosValorados}/${e.totalSubelementos}`,
     ]),
     styles: { fontSize: 8.5 },
     headStyles: { fillColor: BRAND },

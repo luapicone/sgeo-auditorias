@@ -4,7 +4,7 @@ import { h, pct, num, toast, spinner, estadoBadge, estadoAuditBadge, meter, conf
 import { radarElementos, barElementos, doughnutAvance } from '../charts.js';
 import { pdfAuditoria } from '../pdf.js';
 
-const VALS = ['C', 'PC', 'NC', 'NA'];
+const VALS = ['C', 'CP', 'NC', 'NA'];
 
 export async function renderAuditoria(id) {
   renderShell('/', spinner());
@@ -116,9 +116,12 @@ export async function renderAuditoria(id) {
   /* ---------- CARGA ---------- */
   function cargaNode() {
     const wrap = h('div', {});
+    const acciones = h('div', { class: 'btn-row', style: 'margin-bottom:14px' });
     if (canManage && audit.estado !== 'cerrada')
-      wrap.append(h('div', { class: 'btn-row', style: 'margin-bottom:14px' },
-        h('button', { class: 'btn sm', onclick: editarAlcance }, 'Editar alcance')));
+      acciones.append(h('button', { class: 'btn sm', onclick: editarAlcance }, 'Editar alcance'));
+    if (est.modeloCCPS)
+      acciones.append(h('button', { class: 'btn sm', onclick: verModeloCCPS }, 'Modelo CCPS'));
+    if (acciones.children.length) wrap.append(acciones);
 
     if (!editable)
       wrap.append(h('div', { class: 'card pad', style: 'margin-bottom:14px;color:var(--ink-3)' },
@@ -135,7 +138,7 @@ export async function renderAuditoria(id) {
       const head = h('div', { class: 'elem-head' },
         h('span', { class: 'code' }, el.codigo),
         h('span', { class: 'name' }, el.nombre, h('div', { class: 'pdca-tag' }, el.pdca)),
-        h('span', { class: 'mini' }, `${done}/${subs.length} · peso ${el.puntajeCapitulo}`),
+        h('span', { class: 'mini' }, `${done}/${subs.length} · peso ${el.puntajeElemento}`),
         h('span', { style: 'width:120px' }, meter(subs.length ? done / subs.length : 0)));
       head.addEventListener('click', () => body.hidden = !body.hidden);
       body.hidden = done === subs.length && audit.estado !== 'cerrada' && done > 0 ? false : false;
@@ -177,6 +180,20 @@ export async function renderAuditoria(id) {
     if (s.iso45001) parts.push('ISO 45001: ' + s.iso45001);
     if (s.ccps) parts.push('CCPS: ' + s.ccps);
     return parts.join('   ·   ');
+  }
+
+  function verModeloCCPS() {
+    const m = est.modeloCCPS;
+    const box = h('div', { style: 'max-height:60vh;overflow:auto' });
+    for (const p of m.pilares) {
+      box.append(h('div', { style: 'font-weight:700;color:var(--brand);margin:14px 0 2px' }, `Pilar ${p.nro}. ${p.titulo}`));
+      if (p.descripcion) box.append(h('div', { class: 'hint', style: 'margin-bottom:6px' }, p.descripcion));
+      for (const el of p.elementos)
+        box.append(h('div', { style: 'padding:5px 0;border-top:1px solid var(--border)' },
+          h('b', {}, el.id + '  '), el.titulo,
+          el.descripcion ? h('div', { class: 'hint' }, el.descripcion) : null));
+    }
+    modal({ title: m.nombre, body: box, actions: [{ label: 'Cerrar', fn: (c) => c() }] });
   }
 
   function editarAlcance() {
@@ -249,11 +266,11 @@ export async function renderAuditoria(id) {
 
     // tabla por fase PDCA
     wrap.append(h('div', { class: 'card', style: 'margin-bottom:18px' },
-      h('div', { class: 'pad', style: 'padding-bottom:0' }, h('div', { class: 'card-title' }, 'Resultado por fase (capítulo / agrupador PDCA)')),
+      h('div', { class: 'pad', style: 'padding-bottom:0' }, h('div', { class: 'card-title' }, 'Resultado por fase del ciclo PDCA')),
       h('table', {},
         h('thead', {}, h('tr', {}, h('th', {}, 'Fase'), h('th', { class: 'num' }, 'Peso'), h('th', { class: 'num' }, 'Puntaje'), h('th', { class: 'num' }, '% Logro'), h('th', {}, 'Estado'))),
         h('tbody', {}, ...r.fases.map((f) => h('tr', {},
-          h('td', {}, f.pdca), h('td', { class: 'num' }, f.peso), h('td', { class: 'num' }, num(f.puntaje)),
+          h('td', {}, f.pdca), h('td', { class: 'num' }, num(f.peso)), h('td', { class: 'num' }, num(f.puntaje)),
           h('td', { class: 'num' }, pct(f.logro, 1)), h('td', {}, estadoBadge(f.estado))))))));
 
     // tabla por elemento
@@ -265,8 +282,8 @@ export async function renderAuditoria(id) {
           h('th', { class: 'num' }, '% Logro (T)'), h('th', { class: 'num' }, 'Puntaje (V=L·T)'), h('th', {}, 'Estado'), h('th', { class: 'num' }, 'Valorados'))),
         h('tbody', {}, ...r.elementos.map((e) => h('tr', {},
           h('td', {}, e.codigo), h('td', {}, e.nombre), h('td', {}, e.pdca),
-          h('td', { class: 'num' }, e.pesoCapitulo), h('td', { class: 'num' }, pct(e.logro, 1)),
-          h('td', { class: 'num' }, num(e.puntajeCapitulo)), h('td', {}, estadoBadge(e.estado)),
+          h('td', { class: 'num' }, e.pesoElemento), h('td', { class: 'num' }, pct(e.logro, 1)),
+          h('td', { class: 'num' }, num(e.puntajeElemento)), h('td', {}, estadoBadge(e.estado)),
           h('td', { class: 'num' }, `${e.subelementosValorados}/${e.totalSubelementos}`)))))));
 
     // detalle por subelemento

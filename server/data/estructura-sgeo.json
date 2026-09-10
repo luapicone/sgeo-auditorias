@@ -3,10 +3,16 @@
   "modelo": "Modelo de Excelencia Operacional YPF / Modelo YPF 2.0",
   "escalaValoracion": {
     "C": 1.0,
-    "PC": 0.3,
+    "CP": 0.3,
     "NC": 0.0,
-    "NA": 0.0
+    "NA": null
   },
+  "fasesPDCA": [
+    "PLANIFICAR",
+    "HACER",
+    "VERIFICAR",
+    "ACTUAR"
+  ],
   "umbralesEstado": [
     {
       "min": 0.91,
@@ -33,197 +39,210 @@
     {
       "codigo": "E1",
       "nombre": "Liderazgo y enfoque a clientes",
-      "pdca": "PLANIFICAR",
-      "puntajeCapitulo": 15,
+      "puntajeElemento": 15,
       "subelementos": [
         {
           "se": 1,
           "detalle": "Política CAS",
-          "subElementoYPF20": "7.1.",
+          "pdca": "PLANIFICAR",
+          "subElementoYPF20": "1.3",
           "iso9001": "5.2",
           "iso14001": "5.2",
           "iso45001": "5.2",
-          "ccps": "",
-          "iso39001": "5.2 .",
-          "iso50001": "5.2.",
+          "ccps": "-",
+          "iso39001": "5.2",
+          "iso50001": "5.2",
           "ponderacionInicial": 1
         },
         {
           "se": 2,
           "detalle": "Líderes",
-          "subElementoYPF20": "1.2., 4.1., 5.2., 7.1., 7.2.",
+          "pdca": "PLANIFICAR",
+          "subElementoYPF20": "1.2., 4.1., 5.2.",
           "iso9001": "5.1",
           "iso14001": "5.1",
           "iso45001": "5.1",
-          "ccps": "",
-          "iso39001": "5.1, 7.5",
+          "ccps": "1.1",
+          "iso39001": "5.1",
           "iso50001": "5.1",
           "ponderacionInicial": 1
         },
         {
           "se": 3,
           "detalle": "Compromisos con clientes internos y externos",
-          "subElementoYPF20": "2.1., 2.2., 2.3., 3.2.",
-          "iso9001": "4.2, 5.1.2 y 8.2.3",
+          "pdca": "PLANIFICAR",
+          "subElementoYPF20": "2.1., 2.2., 2.3., 2.4, 2.5",
+          "iso9001": "4.2, 5.1.2, 8.2.3",
           "iso14001": "2.4",
           "iso45001": "2.4",
-          "ccps": "",
+          "ccps": "1.5",
           "iso39001": "4.2",
-          "iso50001": "4.2, 7.4.",
+          "iso50001": "4.2",
           "ponderacionInicial": 1
         }
-      ]
+      ],
+      "pdca": "PLANIFICAR"
     },
     {
       "codigo": "E2",
       "nombre": "Planificación",
-      "pdca": "PLANIFICAR",
-      "puntajeCapitulo": 15,
+      "puntajeElemento": 15,
       "subelementos": [
         {
           "se": 4,
           "detalle": "Riesgos y oportunidades de negocios en la organización",
-          "subElementoYPF20": "1.1., 1.2., 1.3., 2.2., 2.3., 2.4., 3.1., 3.2., 3.4., 5.2., 6.1., 6.2., 6.3., 7.1.",
-          "iso9001": "4.1, 4.2 y 6.1",
-          "iso14001": "4.1, 4.2 y 6.1",
-          "iso45001": "4.1, 4.2 y 6.1",
-          "ccps": "4.1.5",
-          "iso39001": "4.1, 6.1, 6.2.",
-          "iso50001": "4.1, 6.1, 6.1.2, 6.3.",
+          "pdca": "PLANIFICAR",
+          "subElementoYPF20": "1.1., 1.2., 1.3., 2.2., 2.3., 2.4., 3.1., 3.2., 3.3., 6.1., 6.2., 6.3.",
+          "iso9001": "4.1, 4.2, 6.1, 6.2, 6.3",
+          "iso14001": "4.1, 4.2, 6.1, 6.2, 6.3",
+          "iso45001": "4.1, 4.2, 6.1, 6.2, 6.3",
+          "ccps": "-",
+          "iso39001": "4.1, 4.2, 6.1, 6.2, 6.3",
+          "iso50001": "4.1, 4.2, 6.1, 6.2, 6.3.",
           "ponderacionInicial": 1
         },
         {
           "se": 5,
           "detalle": "Objetivos y su planificación",
-          "subElementoYPF20": "1.1., 1.3., 2.1., 2.2., 2.3., 2.4., 3.2., 4.1., 6.1., 6.2., 6.3.",
+          "pdca": "PLANIFICAR",
+          "subElementoYPF20": "1.1., 1.3., 3.2., 4.1., 6.1., 6.2., 6.3.",
           "iso9001": "2.6",
           "iso14001": "2.6",
           "iso45001": "2.6",
-          "ccps": "",
+          "ccps": "-",
           "iso39001": "6.4",
-          "iso50001": "6.2.1, 6.2, 6.2.2, 6.2.3",
+          "iso50001": "6.2",
           "ponderacionInicial": 1
         },
         {
           "se": 6,
           "detalle": "Modelo organizativo y personas",
-          "subElementoYPF20": "1.3., 2.1., 2.2., 4.1., 5.1., 5.3.",
+          "pdca": "PLANIFICAR",
+          "subElementoYPF20": "1.2, 1.3., 5.1., 5.2, 5.3.",
           "iso9001": "5.3 y 7.1.2",
           "iso14001": "3.5",
           "iso45001": "3.5",
-          "ccps": "4.1.4",
-          "iso39001": "7.2 , 5.3 , 7.3",
-          "iso50001": "5.3, 7.1, 7.2",
+          "ccps": "-",
+          "iso39001": "5.3 , 7.3",
+          "iso50001": "5.3, 7.2",
           "ponderacionInicial": 1
         },
         {
           "se": 7,
           "detalle": "Roles, responsabilidades y autoridad",
-          "subElementoYPF20": "3.1., 3.2., 3.4., 5.1.",
+          "pdca": "PLANIFICAR",
+          "subElementoYPF20": "1.1, 1.2, 3.1., 3.2., 3.3., 5.1.",
           "iso9001": "3.5",
           "iso14001": "3.5",
           "iso45001": "3.5",
-          "ccps": "4.1.4",
+          "ccps": "1.1",
           "iso39001": "5.3",
           "iso50001": "5.3",
           "ponderacionInicial": 1
         }
-      ]
+      ],
+      "pdca": "PLANIFICAR"
     },
     {
       "codigo": "E3",
       "nombre": "Soporte a la gestión, procesos y normativa",
-      "pdca": "HACER",
-      "puntajeCapitulo": 15,
+      "puntajeElemento": 15,
       "subelementos": [
         {
           "se": 8,
           "detalle": "Comunicación (externa e interna), participación y consulta",
-          "subElementoYPF20": "1.1., 1.3., 2.1., 2.2., 2.3., 2.4., 4.1., 5.2., 5.3., 6.2., 6.3., 7.1., 7.2.",
+          "pdca": "HACER",
+          "subElementoYPF20": "1.1., 1.3., 2.2., 2.3., 4.1., 5.2., 5.3., 6.2., 6.3., 7.1., 7.2.",
           "iso9001": "7.4 y 8.2.1",
           "iso14001": "4.7",
           "iso45001": "4.7",
-          "ccps": "4.1.5",
+          "ccps": "1.4",
           "iso39001": "7.1,  7.5",
-          "iso50001": "7.4, 4.2",
+          "iso50001": "7.4",
           "ponderacionInicial": 1
         },
         {
           "se": 9,
           "detalle": "Procesos y documentos",
-          "subElementoYPF20": "3.1., 3.2., 3.4., 5.1., 6.2., 7.2.",
+          "pdca": "HACER",
+          "subElementoYPF20": "3.1., 3.2., 6.2.",
           "iso9001": "5.7",
           "iso14001": "5.7",
           "iso45001": "5.7",
-          "ccps": "4.3.1",
-          "iso39001": "4.4 , 7.6 .",
-          "iso50001": "7.5, 7.5.1, 7.5.2, 7.5.3, 4.4",
+          "ccps": "3.1",
+          "iso39001": "7.6",
+          "iso50001": "7.5",
           "ponderacionInicial": 1
         },
         {
           "se": 10,
           "detalle": "Normativa externa e interna",
-          "subElementoYPF20": "1.1., 1.2., 2.2., 3.1., 3.4., 7.1., 7.2.",
-          "iso9001": "8.2.2",
-          "iso14001": "6.1.3",
-          "iso45001": "6.1.3",
-          "ccps": "4.1.2",
-          "iso39001": "4.2 , 7.6.3, 7.1 , 7.5",
-          "iso50001": "4.2, 9.1.2., 7.5.3.",
+          "pdca": "HACER",
+          "subElementoYPF20": "3.2, 3.4",
+          "iso9001": "8.2",
+          "iso14001": "6.1.3, 9.1.2",
+          "iso45001": "6.1.3, 9.1.2",
+          "ccps": "1.2",
+          "iso39001": "9.1",
+          "iso50001": "9.1.2.",
           "ponderacionInicial": 1
         },
         {
           "se": 11,
           "detalle": "Tecnologías digitales",
-          "subElementoYPF20": "3.3., 6.3., 7.2.",
+          "pdca": "HACER",
+          "subElementoYPF20": "3.2., 6.3.",
           "iso9001": "7.1.3",
-          "iso14001": "",
-          "iso45001": "",
-          "ccps": "",
-          "iso39001": "7.2 y 6.4",
-          "iso50001": "6.6, 9.1, 7.1.",
+          "iso14001": "7.1.",
+          "iso45001": "7.1.",
+          "ccps": "-",
+          "iso39001": "7.2.",
+          "iso50001": "7.1.",
           "ponderacionInicial": 1
         }
-      ]
+      ],
+      "pdca": "HACER"
     },
     {
       "codigo": "E4",
       "nombre": "Operación",
-      "pdca": "HACER",
-      "puntajeCapitulo": 35,
+      "puntajeElemento": 35,
       "subelementos": [
         {
           "se": 12,
           "detalle": "Identificación operativa de peligros/aspectos y evaluación de riesgos/impactos",
-          "subElementoYPF20": "1.1., 1.3, 3.2., 3.4., 5.3., 6.1., 7.2.",
-          "iso9001": "",
-          "iso14001": "6.1.2",
-          "iso45001": "6.1.2",
-          "ccps": "4.2.2, 4.3.7",
-          "iso39001": "6.1, 6.2 y 6.3.",
-          "iso50001": "6.3, 6.1",
+          "pdca": "HACER",
+          "subElementoYPF20": "1.1., 1.3, 3.2., 3.3., 5.4, 6.4, 7.2.",
+          "iso9001": "6.1",
+          "iso14001": "6.1.2, 6.1.4",
+          "iso45001": "6.1.2, 6.1.4",
+          "ccps": "2.2",
+          "iso39001": "6.2",
+          "iso50001": "6.1.",
           "ponderacionInicial": 1
         },
         {
           "se": 13,
           "detalle": "Integridad de activos y confiabilidad",
-          "subElementoYPF20": "1.1., 1.3., 3.2., 6.1., 6.3., 7.2.",
-          "iso9001": "7.1.3",
-          "iso14001": "",
-          "iso45001": "",
-          "ccps": "4.3.3",
-          "iso39001": "6.3 y 8.1",
-          "iso50001": "8.1, 6.3.",
+          "pdca": "HACER",
+          "subElementoYPF20": "6.4",
+          "iso9001": "8.1",
+          "iso14001": "8.1",
+          "iso45001": "8.1",
+          "ccps": "3.3",
+          "iso39001": "8.1",
+          "iso50001": "8.1",
           "ponderacionInicial": 1
         },
         {
           "se": 14,
           "detalle": "Definición y ejecución de procedimientos y criterios operativos",
-          "subElementoYPF20": "3.3.",
-          "iso9001": "8.1, 8.5 y 8.6",
+          "pdca": "HACER",
+          "subElementoYPF20": "3.2",
+          "iso9001": "8.2, 8.3, 8.4, 8.5, 8.6, 8.7",
           "iso14001": "8.1",
           "iso45001": "8.1",
-          "ccps": "4.3.2",
+          "ccps": "3.8",
           "iso39001": "8.1",
           "iso50001": "8.1, 6.3.",
           "ponderacionInicial": 1
@@ -231,115 +250,124 @@
         {
           "se": 15,
           "detalle": "Gestión de procesos, bienes y servicios contratados externamente",
-          "subElementoYPF20": "3.4., 6.1., 6.3",
+          "pdca": "HACER",
+          "subElementoYPF20": "3.3, 6.3",
           "iso9001": "8.4",
           "iso14001": "8.1",
           "iso45001": "8.1.4",
-          "ccps": "4.3.4",
-          "iso39001": "8.1., 7.2",
-          "iso50001": "8.3, 8.1",
+          "ccps": "3.4",
+          "iso39001": "7.2",
+          "iso50001": "8.3",
           "ponderacionInicial": 1
         },
         {
           "se": 16,
           "detalle": "Planificación y gestión del cambio",
-          "subElementoYPF20": "1.1., 6.2., 6.3.",
-          "iso9001": "6.3, 8.1 y 8.5.6",
-          "iso14001": "6.3 y 8.1",
+          "pdca": "HACER",
+          "subElementoYPF20": "1.3, 3.2",
+          "iso9001": "8.5.6",
+          "iso14001": "6.3",
           "iso45001": "8.1.3",
-          "ccps": "4.3.6",
-          "iso39001": "8.1., 6.2.",
-          "iso50001": "8.2, 8.1, 5.1",
+          "ccps": "3.6, 3.7",
+          "iso39001": "-",
+          "iso50001": "-",
           "ponderacionInicial": 1
         },
         {
           "se": 17,
           "detalle": "Capacidades",
-          "subElementoYPF20": "3.2., 3.4., 5.1., 5.2., 5.3., 6.2., 7.2.",
+          "pdca": "HACER",
+          "subElementoYPF20": "3.2., 3.3., 5.1., 5.2., 6.2.",
           "iso9001": "2.7",
           "iso14001": "2.7",
           "iso45001": "2.7",
-          "ccps": "4.1.3",
-          "iso39001": "7.3 , 7.2",
-          "iso50001": "7.2, 7.1",
+          "ccps": "1.3, 3.5",
+          "iso39001": "7.3",
+          "iso50001": "7.2",
           "ponderacionInicial": 1
         },
         {
           "se": 18,
           "detalle": "Disciplina operativa y toma de conciencia",
-          "subElementoYPF20": "1.1., 3.3., 3.4., 5.1., 5.2.",
+          "pdca": "HACER",
+          "subElementoYPF20": "3.2., 3.3., 5.1., 5.2",
           "iso9001": "3.7",
           "iso14001": "3.7",
           "iso45001": "3.7",
-          "ccps": "4.1.1, 4.3.5, 4.3.8",
+          "ccps": "3.2",
           "iso39001": "4.7",
-          "iso50001": "7.3, 8.1",
+          "iso50001": "7.3",
           "ponderacionInicial": 1
         },
         {
           "se": 19,
           "detalle": "Gestión de conocimiento",
-          "subElementoYPF20": "3.3., 5.1., 5.2., 6.2., 7.2.",
+          "pdca": "HACER",
+          "subElementoYPF20": "3.2., 5.1., 5.2., 6.2.",
           "iso9001": "7.1.6",
-          "iso14001": "",
-          "iso45001": "",
-          "ccps": "4.2.1",
-          "iso39001": "7.6, 9.2 y 7.4",
-          "iso50001": "7.5, 6.3, 6.6, 9.1",
+          "iso14001": "-",
+          "iso45001": "-",
+          "ccps": "2.1",
+          "iso39001": "-",
+          "iso50001": "-",
           "ponderacionInicial": 1
         },
         {
           "se": 20,
           "detalle": "Preparación y respuesta ante emergencias",
-          "subElementoYPF20": "1.1., 1.3, 5.3., 6.3., 7.1., 7.2.",
-          "iso9001": "",
+          "pdca": "HACER",
+          "subElementoYPF20": "1.3, 5.4, 6.3., 6.4, 7.2.",
+          "iso9001": "-",
           "iso14001": "2.8",
           "iso45001": "2.8",
-          "ccps": "4.3.9",
+          "ccps": "3.9",
           "iso39001": "8.2",
-          "iso50001": "8.1, 6.1",
+          "iso50001": "-",
           "ponderacionInicial": 1
         }
-      ]
+      ],
+      "pdca": "HACER"
     },
     {
       "codigo": "E5",
       "nombre": "Evaluación y mejora",
-      "pdca": "VERIFICAR ACTUAR",
-      "puntajeCapitulo": 20,
+      "puntajeElemento": 20,
       "subelementos": [
         {
           "se": 21,
           "detalle": "Seguimiento, medición, análisis de eficiencia y optimización de costos",
-          "subElementoYPF20": "1.1., 1.2., 1.3, 2.4., 3.1., 3.3., 3.4., 4.1., 5.1., 5.2., 5.3., 6.1., 6.3., 7.2.",
+          "pdca": "VERIFICAR",
+          "subElementoYPF20": "1.1, 1.2, 1.3, 2.1, 2.2, 2.3, 2.4., 3.1., 3.2, 3.3., 4.1., 5.1., 5.2., 5.3., 5.4, 6.1., 6.2, 6.3., 6.4, 7.1, 7.2.",
           "iso9001": "1.9",
           "iso14001": "1.9",
           "iso45001": "1.9",
-          "ccps": "4.4.2",
-          "iso39001": "9.1., 6.3 , 6.4.",
-          "iso50001": "6.3, 6.4, 9.1, 6.5, 6.6",
+          "ccps": "4.2",
+          "iso39001": "9.1",
+          "iso50001": "9.1",
           "ponderacionInicial": 1
         },
         {
           "se": 22,
           "detalle": "Evaluación de cumplimiento",
-          "subElementoYPF20": "3.3., 3.4., 7.2.",
-          "iso9001": "9.1.3",
+          "pdca": "VERIFICAR",
+          "subElementoYPF20": "3.2, 3.3",
+          "iso9001": "9.1.2, 9.1.3",
           "iso14001": "9.1.2",
           "iso45001": "9.1.2",
-          "ccps": "",
-          "iso39001": "9.1.2",
-          "iso50001": "9.1.2.",
+          "ccps": "4.2",
+          "iso39001": "9.1",
+          "iso50001": "9.1",
           "ponderacionInicial": 1
         },
         {
           "se": 23,
           "detalle": "No conformidades y acciones correctivas",
-          "subElementoYPF20": "2.2., 3.3., 3.4., 5.2., 6.1., 6.2., 7.2.",
+          "pdca": "VERIFICAR",
+          "subElementoYPF20": "3.2., 3.3, 5.4, 6.4, 7.1, 7.2",
           "iso9001": "2.10",
           "iso14001": "2.10",
           "iso45001": "2.10",
-          "ccps": "",
+          "ccps": "-",
           "iso39001": "10.1.",
           "iso50001": "10.1",
           "ponderacionInicial": 1
@@ -347,52 +375,190 @@
         {
           "se": 24,
           "detalle": "Incidentes y accidentes",
-          "subElementoYPF20": "3.3., 3.4., 6.2., 7.1., 7.2.",
+          "pdca": "VERIFICAR",
+          "subElementoYPF20": "3.2., 3.3, 5.4, 6.4, 7.1, 7.2",
           "iso9001": "2.10",
           "iso14001": "2.10",
           "iso45001": "2.10",
-          "ccps": "4.4.1",
-          "iso39001": "9.2, 10.1 y 10.2",
-          "iso50001": "9.1, 10.1",
+          "ccps": "4.1",
+          "iso39001": "10.1.",
+          "iso50001": "10.1",
           "ponderacionInicial": 1
         },
         {
           "se": 25,
           "detalle": "Auditorías",
-          "subElementoYPF20": "1.1., 6.1., 6.2.",
+          "pdca": "VERIFICAR",
+          "subElementoYPF20": "3.2, 3.3",
           "iso9001": "2.9",
           "iso14001": "2.9",
           "iso45001": "2.9",
-          "ccps": "4.4.3",
-          "iso39001": "9.3,",
+          "ccps": "4.3",
+          "iso39001": "9.3",
           "iso50001": "9.2",
           "ponderacionInicial": 1
         },
         {
           "se": 26,
           "detalle": "Revisiones de gestión",
-          "subElementoYPF20": "1.1., 1.2, 1.3., 3.1., 3.2., 3.3., 4.1., 6.1., 6.2.",
+          "pdca": "VERIFICAR",
+          "subElementoYPF20": "1.1., 1.2, 1.3., 3.2., 3.3., 5.4, 6.1, 6.4, 7.2",
           "iso9001": "3.9",
           "iso14001": "3.9",
           "iso45001": "3.9",
-          "ccps": "",
-          "iso39001": "9.4,",
+          "ccps": "4.3",
+          "iso39001": "9.4",
           "iso50001": "9.3",
           "ponderacionInicial": 1
         },
         {
           "se": 27,
           "detalle": "Mejora continua e innovación",
-          "subElementoYPF20": "1.3., 3.1., 3.2, 3.3., 3.4., 4.1., 5.1., 5.3., 6.2., 6.3.",
+          "pdca": "ACTUAR",
+          "subElementoYPF20": "1.1, 1.2, 1.3, 2.1, 2.2, 2.3, 2.4., 3.1., 3.2, 3.3., 4.1., 5.1., 5.2., 5.3., 5.4, 6.1., 6.2, 6.3., 6.4, 7.1, 7.2.",
           "iso9001": "3.10",
           "iso14001": "1.10",
           "iso45001": "3.10",
-          "ccps": "4.4.4",
-          "iso39001": "9.4, 10.1 y 10.2",
-          "iso50001": "10.2, 9.3",
+          "ccps": "4.4",
+          "iso39001": "10.2",
+          "iso50001": "10.2",
           "ponderacionInicial": 1
         }
-      ]
+      ],
+      "pdca": "VERIFICAR / ACTUAR"
     }
-  ]
+  ],
+  "modeloCCPS": {
+    "nombre": "CCPS RBPS — Pilares y Elementos de la Seguridad de Procesos (PSM)",
+    "pilares": [
+      {
+        "nro": 1,
+        "titulo": "Compromiso con la seguridad de procesos",
+        "descripcion": "Compromiso de la dirección. Las organizaciones mejoran con un fuerte liderazgo y sólido compromiso. Toda la organización debe estar alineada.",
+        "elementos": [
+          {
+            "id": "1.1",
+            "titulo": "Cultura de seguridad de procesos",
+            "descripcion": "Fomentar una actitud colectiva e individual de prioridad de la seguridad."
+          },
+          {
+            "id": "1.2",
+            "titulo": "Cumplimiento de los estándares",
+            "descripcion": "Seguir de forma rigurosa las normativas, códigos y leyes vigentes."
+          },
+          {
+            "id": "1.3",
+            "titulo": "Competencia en seguridad de procesos",
+            "descripcion": "Desarrollar y mantener los conocimientos técnicos pertinentes de todo el personal."
+          },
+          {
+            "id": "1.4",
+            "titulo": "Participación de la fuerza de trabajo",
+            "descripcion": "Involucrar activamente a los trabajadores en las decisiones y comités de seguridad."
+          },
+          {
+            "id": "1.5",
+            "titulo": "Alcance a las partes interesadas",
+            "descripcion": "Mantener una comunicación transparente con la comunidad y entes externos."
+          }
+        ]
+      },
+      {
+        "nro": 2,
+        "titulo": "Entendimiento de los peligros y riesgos",
+        "descripcion": "Las organizaciones que entienden los peligros y riesgos están mejor capacitadas para asignar recursos limitados de la manera más eficaz.",
+        "elementos": [
+          {
+            "id": "2.1",
+            "titulo": "Gestión del conocimiento del proceso",
+            "descripcion": "Recopilar y mantener actualizada toda la documentación técnica de las instalaciones."
+          },
+          {
+            "id": "2.2",
+            "titulo": "Identificación de peligros y análisis de riesgos",
+            "descripcion": "Evaluar de forma sistemática los escenarios de fallas potenciales."
+          }
+        ]
+      },
+      {
+        "nro": 3,
+        "titulo": "Gestión de Riesgos",
+        "descripcion": "Foco en: Disciplina operativa - Gestión del cambio - Preparación y respuesta a la emergencia",
+        "elementos": [
+          {
+            "id": "3.1",
+            "titulo": "Procedimientos operativos",
+            "descripcion": "Mantener instrucciones de trabajo claras para operar de forma segura"
+          },
+          {
+            "id": "3.2",
+            "titulo": "Prácticas de trabajo seguro",
+            "descripcion": "Controlar actividades críticas que no forman parte de la rutina."
+          },
+          {
+            "id": "3.3",
+            "titulo": "Integridad y confiabilidad de activos",
+            "descripcion": "Asegurar que los equipos críticos funcionen correctamente mediante mantenimiento inspección y pruebas."
+          },
+          {
+            "id": "3.4",
+            "titulo": "Gestión de contratistas",
+            "descripcion": "Garantizar que el personal externo cumpla con los mismos estándares de seguridad de la organización."
+          },
+          {
+            "id": "3.5",
+            "titulo": "Capacitación y desempeño",
+            "descripcion": "Entrenar al personal operativo y verificar que aplican los conocimientos de seguridad en sus actvidades diarias."
+          },
+          {
+            "id": "3.6",
+            "titulo": "Gestión del cambio",
+            "descripcion": "Evaluar y autorizar cualquier modificación física, de personas o de proceso previo a su ejecución."
+          },
+          {
+            "id": "3.7",
+            "titulo": "Preparación operacional (previa al arranque)",
+            "descripcion": "Confirmar que una instalación nueva o modificada cumple con todos los requisitos técnicos previo a su puesta en marcha."
+          },
+          {
+            "id": "3.8",
+            "titulo": "Conducir las operaciones",
+            "descripcion": "Ejecutar las tareas diarias dentro de los límites de diseño de los activos."
+          },
+          {
+            "id": "3.9",
+            "titulo": "Gestión de emergencias",
+            "descripcion": "Planificar y realizar simulacros de respuesta ante siniestros o pérdidas de contención químicas."
+          }
+        ]
+      },
+      {
+        "nro": 4,
+        "titulo": "Aprender de la experiencia",
+        "descripcion": "Implica el monitoreo y la actuación en base a las fuentes internas y externas de información, corregir incidentes y accidentes, y aplicar lecciones aprendidas.",
+        "elementos": [
+          {
+            "id": "4.1",
+            "titulo": "Investigación de incidentes",
+            "descripcion": "Determinar las causas raíz de accidentes, incidentes y cuasiaccidentes para evitar su repetición."
+          },
+          {
+            "id": "4.2",
+            "titulo": "Mediciones y métricas",
+            "descripcion": "Utilizar indicadores clave de desempeño preventivos y reactivos para evaluar el estado del sistema."
+          },
+          {
+            "id": "4.3",
+            "titulo": "Auditorías (verificación)",
+            "descripcion": "Realizar revisiones periódicas e independientes sobre la eficacia de los elementos implementados."
+          },
+          {
+            "id": "4.4",
+            "titulo": "Mejora continua",
+            "descripcion": "Evaluar periódicamente los resultados del sistema por parte de la alta gerencia para optimizarlo."
+          }
+        ]
+      }
+    ]
+  }
 }
