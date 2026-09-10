@@ -146,7 +146,7 @@ Resumen (el detalle completo, con las fórmulas celda por celda, está en
 [`ANALISIS_EXCEL.md`](ANALISIS_EXCEL.md)):
 
 1. **Valoración → fracción** (columna S del Excel):
-   `C = 1.0`, `CP = 0.3`, `NC = 0.0`, `NA = 0`.
+   `C = 1.0`, `CP = 0.3`, `NC = 0.0`. **`NA` no se cuenta** (se excluye del cálculo).
 2. **% de logro del elemento** (columna T): `Σ fracciones / cantidad de subelementos`
    (cada subelemento pesa 1, columna M).
 3. **Estado** (columna U): umbrales `91 / 81 / 61 / 41 %` →
@@ -158,7 +158,7 @@ Resumen (el detalle completo, con las fórmulas celda por celda, está en
 
 Con las 27 filas cargadas, los resultados de la app son **idénticos** a las celdas
 T/U/V/W del Excel. Lo único que la app agrega (porque el Excel no lo define) es el
-manejo de **alcance parcial** y el **estado global / resultado por fase PDCA (4 fases)** — todo
+manejo de **alcance parcial**, el tratamiento de **`NA` como no computable** y el **estado global / resultado por fase PDCA (4 fases)** — todo
 señalado en `ANALISIS_EXCEL.md` §4.
 
 ### Regenerar la estructura desde el Excel

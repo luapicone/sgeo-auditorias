@@ -94,10 +94,11 @@ export async function renderAuditoria(id) {
             ? h('button', { class: 'btn primary', onclick: cerrar }, 'Cerrar auditoría')
             : null)),
       h('div', { class: 'grid cols-4', style: 'margin-bottom:18px' },
-        stat('Cumplimiento total', pct(r.total.logro, 1), `${num(r.total.puntajeSobre100)} / ${r.total.pesoIncluido} puntos`),
+        stat('Cumplimiento total', pct(r.total.logro, 1),
+          r.total.pesoIncluido > 0 ? `${num(r.total.puntajeSobre100)} / ${r.total.pesoIncluido} puntos` : 'sin subelementos aplicables'),
         stat('Nivel alcanzado', '', '', estadoBadge(r.total.estado)),
         stat('Avance de carga', `${r.avance.subelementosValorados}/${r.avance.totalSubelementos}`, `${num(r.avance.porcentaje, 0)}% valorado`),
-        stat('Elementos en alcance', r.elementos.length, `de ${est.elementos.length}`)));
+        stat('Elementos evaluados', r.elementos.filter((e) => e.aplica).length, `de ${r.elementos.length} en alcance`)));
   }
 
   function updateHeaderStats() {
@@ -252,7 +253,9 @@ export async function renderAuditoria(id) {
         h('div', { class: 'card-title' }, 'Resultado total de auditoría'),
         h('div', { style: 'font-size:34px;font-weight:700' }, pct(r.total.logro, 1)),
         h('div', { style: 'margin:6px 0' }, estadoBadge(r.total.estado)),
-        h('div', { class: 'hint' }, `${num(r.total.puntajeSobre100)} de ${r.total.pesoIncluido} puntos ponderados`)),
+        h('div', { class: 'hint' }, r.total.pesoIncluido > 0
+          ? `${num(r.total.puntajeSobre100)} de ${r.total.pesoIncluido} puntos ponderados`
+          : 'Todos los subelementos en alcance están marcados "No aplica"')),
       h('div', { class: 'card pad' },
         h('div', { class: 'card-title' }, 'Avance de la auditoría'),
         h('div', { style: 'height:150px;position:relative' }, h('canvas', { id: 'ch-av' }))),
@@ -269,9 +272,10 @@ export async function renderAuditoria(id) {
       h('div', { class: 'pad', style: 'padding-bottom:0' }, h('div', { class: 'card-title' }, 'Resultado por fase del ciclo PDCA')),
       h('table', {},
         h('thead', {}, h('tr', {}, h('th', {}, 'Fase'), h('th', { class: 'num' }, 'Peso'), h('th', { class: 'num' }, 'Puntaje'), h('th', { class: 'num' }, '% Logro'), h('th', {}, 'Estado'))),
-        h('tbody', {}, ...r.fases.map((f) => h('tr', {},
+        h('tbody', {}, ...(r.fases.length ? r.fases : []).map((f) => h('tr', {},
           h('td', {}, f.pdca), h('td', { class: 'num' }, num(f.peso)), h('td', { class: 'num' }, num(f.puntaje)),
-          h('td', { class: 'num' }, pct(f.logro, 1)), h('td', {}, estadoBadge(f.estado))))))));
+          h('td', { class: 'num' }, pct(f.logro, 1)), h('td', {}, estadoBadge(f.estado)))),
+          r.fases.length ? null : h('tr', {}, h('td', { colspan: 5, class: 'empty', style: 'padding:20px' }, 'Sin subelementos aplicables.'))))));
 
     // tabla por elemento
     wrap.append(h('div', { class: 'card', style: 'margin-bottom:18px' },
@@ -280,11 +284,14 @@ export async function renderAuditoria(id) {
         h('thead', {}, h('tr', {},
           h('th', {}, 'Cód.'), h('th', {}, 'Elemento'), h('th', {}, 'Fase'), h('th', { class: 'num' }, 'Peso (L)'),
           h('th', { class: 'num' }, '% Logro (T)'), h('th', { class: 'num' }, 'Puntaje (V=L·T)'), h('th', {}, 'Estado'), h('th', { class: 'num' }, 'Valorados'))),
-        h('tbody', {}, ...r.elementos.map((e) => h('tr', {},
+        h('tbody', {}, ...r.elementos.map((e) => h('tr', { style: e.aplica ? '' : 'color:var(--ink-3)' },
           h('td', {}, e.codigo), h('td', {}, e.nombre), h('td', {}, e.pdca),
-          h('td', { class: 'num' }, e.pesoElemento), h('td', { class: 'num' }, pct(e.logro, 1)),
-          h('td', { class: 'num' }, num(e.puntajeElemento)), h('td', {}, estadoBadge(e.estado)),
-          h('td', { class: 'num' }, `${e.subelementosValorados}/${e.totalSubelementos}`)))))));
+          h('td', { class: 'num' }, e.pesoElemento),
+          h('td', { class: 'num' }, e.aplica ? pct(e.logro, 1) : '—'),
+          h('td', { class: 'num' }, e.aplica ? num(e.puntajeElemento) : '—'),
+          h('td', {}, estadoBadge(e.estado)),
+          h('td', { class: 'num' }, `${e.subelementosValorados}/${e.totalSubelementos}`
+            + (e.subelementosNA ? ` · ${e.subelementosNA} N/A` : ''))))))));
 
     // detalle por subelemento
     const detRows = [];

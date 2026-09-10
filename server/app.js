@@ -239,7 +239,7 @@ app.get('/api/compare', auth, soloJefa, wrap(async (req, res) => {
       auditor: a.auditor_nombre, estado: a.estado,
       total: a.resultado.total, avance: a.resultado.avance, fases: a.resultado.fases,
       elementos: a.resultado.elementos.map((el) => ({
-        codigo: el.codigo, nombre: el.nombre, logro: el.logro, estado: el.estado,
+        codigo: el.codigo, nombre: el.nombre, logro: el.logro, estado: el.estado, aplica: el.aplica,
         puntajeElemento: el.puntajeElemento, pesoElemento: el.pesoElemento,
       })),
     })),

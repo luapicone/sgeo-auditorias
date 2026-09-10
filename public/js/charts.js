@@ -12,7 +12,7 @@ export function radarElementos(canvas, elementos, series) {
         label: s.label,
         data: elementos.map((e) => {
           const m = s.byCodigo[e.codigo];
-          return m && m.logro != null ? +(m.logro * 100).toFixed(1) : 0;
+          return m && m.logro != null ? +(m.logro * 100).toFixed(1) : null;
         }),
         borderColor: PALETTE[i % PALETTE.length],
         backgroundColor: PALETTE[i % PALETTE.length] + '22',

@@ -13,6 +13,7 @@ extensiones (que el Excel no define) están señaladas explícitamente.
 > - Los encabezados L/T/U/V pasaron de "…del Capítulo" a **"…del Elemento"**.
 > - Se agregó la comparación completa con **CCPS** y el modelo CCPS quedó en una 2ª hoja
 >   del Excel, que la app muestra en "Modelo CCPS".
+> - **`NA` ("No aplica") ya no penaliza:** se excluye del cálculo del elemento (ver §4.5).
 
 ---
 
@@ -143,11 +144,18 @@ subconjunto, por lo que se agregaron reglas explícitas:
    de modo que la suma de las 4 fases da exactamente el total (E5 se divide: 6/7 de
    sus 20 puntos van a VERIFICAR y 1/7 a ACTUAR).
 
-5. **`NA` (“No aplica”):** el Excel lo trata como 0 en el numerador pero lo mantiene
-   en el denominador (M = 1), es decir, **penaliza el puntaje**. La app respeta ese
-   comportamiento. Si se quisiera que `NA` no penalice (excluirlo del denominador),
-   es un cambio de una línea en `server/scoring.js` (función `calcularResultado`),
-   pero se documenta aquí porque *cambiaría* el resultado respecto del Excel.
+5. **`NA` (“No aplica”) — DIVERGENCIA DELIBERADA DEL EXCEL:** el Excel cuenta el `NA`
+   como 0 en el numerador y lo mantiene en el denominador (penaliza). **La app lo
+   excluye por completo**: un subelemento `NA` no entra ni en el numerador ni en el
+   denominador del elemento, ni en el reparto de peso por fase.
+   - Un elemento con **algunos** `NA` conserva todo su peso `L`; su % de logro se
+     calcula sólo sobre los subelementos aplicables (los no-`NA`).
+   - Un elemento con **todos** sus subelementos en `NA` queda **“No aplica”**: sin %
+     de logro, sin puntaje, y **no cuenta en el total** (su peso `L` se descuenta del
+     divisor, igual que un elemento fuera de alcance).
+   - Si *toda* la auditoría queda en `NA`, el total muestra “—” (no “0% Crítico”).
+   El avance de carga sí cuenta el `NA` como decisión tomada (una fila marcada `NA`
+   está “resuelta”).
 
 ---
 

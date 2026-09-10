@@ -22,7 +22,8 @@ export const num = (x, dec = 1) => (x == null || Number.isNaN(x) ? '—' : Numbe
 
 export const ESTADO_COLOR = {
   Mantener: '#1a7f5a', Optimizar: '#3b82a0', Mejorar: '#c98a1b',
-  Implementar: '#d9722b', 'Crítico': '#c0392b', '—': '#8a8f98',
+  Implementar: '#d9722b', 'Crítico': '#c0392b',
+  'No aplica': '#8a8f98', '—': '#8a8f98', 'Sin datos': '#8a8f98',
 };
 export const VAL_LABEL = { C: 'Cumple', CP: 'Cumple parcialmente', NC: 'No cumple', NA: 'No aplica' };
 

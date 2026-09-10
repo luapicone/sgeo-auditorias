@@ -31,10 +31,13 @@
  *  - Total con alcance parcial: se re-normaliza por la suma de los pesos L de los elementos
  *    incluidos (con las 27 filas el divisor es 100, idéntico al Excel).
  *  - "Estado" del total y de cada fase PDCA: se reutilizan los umbrales de la columna U.
- *  - NA ("No aplica"): 0 en el numerador y 1 en el denominador (penaliza), igual que el Excel.
+ *  - NA ("No aplica"): **NO se considera en el cálculo del elemento** — se excluye del
+ *    numerador Y del denominador (a diferencia del Excel, que lo cuenta como 0 y penaliza).
+ *    Un elemento con todos sus subelementos en NA queda "No aplica": sin % de logro y sin
+ *    peso en el total de la auditoría.
  */
 
-export const ESCALA = { C: 1.0, CP: 0.3, NC: 0.0, NA: 0.0 };
+export const ESCALA = { C: 1.0, CP: 0.3, NC: 0.0 };
 
 export const VALORACIONES = [
   { code: 'C', label: 'Cumple' },
@@ -64,9 +67,11 @@ export const COLOR_ESTADO = {
   '—': '#8a8f98',
 };
 
-/** S(v): réplica de la columna S. */
+export const COLOR_ESTADO_NA = '#8a8f98';
+
+/** S(v): réplica de la columna S (NA no tiene valor numérico, se excluye del cálculo). */
 export function evaluacionFinal(valoracion) {
-  if (!valoracion) return 0;
+  if (!valoracion || valoracion === 'NA') return 0;
   return ESCALA[valoracion] ?? 0;
 }
 
@@ -86,56 +91,74 @@ export function calcularResultado(estructura, items) {
 
   for (const el of estructura.elementos) {
     const pesoEl = el.puntajeElemento;
-    const pesoSub = el.subelementos.length ? pesoEl / el.subelementos.length : 0;
+
+    // subelementos en alcance de esta auditoría
+    const enScope = el.subelementos.filter((sub) => enAlcance.has(sub.se));
+    if (enScope.length === 0) continue; // elemento sin nada en alcance
+
+    // aplicables = en alcance y NO marcados "No aplica"
+    const aplicables = enScope.filter((sub) => enAlcance.get(sub.se) !== 'NA');
+    const pesoSub = aplicables.length ? pesoEl / aplicables.length : 0;
 
     const subs = [];
-    let sumaS = 0;      // SUM(S) del elemento
-    let denom = 0;      // SUM(M) del elemento = nº de subelementos en alcance
-    let valorados = 0;
+    let sumaS = 0;      // SUM(S) sobre subelementos aplicables
+    let denom = 0;      // nº de subelementos aplicables (excluye NA)
+    let valorados = 0;  // decisiones tomadas (incluye NA) — para el avance
+    let naCount = 0;
 
-    for (const sub of el.subelementos) {
-      if (!enAlcance.has(sub.se)) continue; // fuera de alcance -> se ignora
+    for (const sub of enScope) {
       const valoracion = enAlcance.get(sub.se);
-      const s = evaluacionFinal(valoracion);
-      denom += 1;                 // M = 1
-      if (valoracion) { sumaS += s; valorados += 1; }
+      const esNA = valoracion === 'NA';
+      if (valoracion) valorados += 1;
+
+      if (esNA) {
+        naCount += 1;
+      } else {
+        const s = evaluacionFinal(valoracion);
+        denom += 1;
+        if (valoracion) sumaS += s; // pendiente: aporta 0 al numerador, 1 al denominador
+
+        const f = fases.get(sub.pdca) || { pdca: sub.pdca, logroNum: 0, logroDen: 0, puntaje: 0, peso: 0 };
+        f.logroDen += 1;
+        f.peso += pesoSub;
+        if (valoracion) { f.logroNum += s; f.puntaje += pesoSub * s; }
+        fases.set(sub.pdca, f);
+      }
+
       subs.push({
         se: sub.se,
         detalle: sub.detalle,
         pdca: sub.pdca,
         valoracion,
-        evaluacionFinal: valoracion ? s : null,
+        evaluacionFinal: valoracion && !esNA ? evaluacionFinal(valoracion) : null,
       });
-
-      // aporte a la fase PDCA del subelemento
-      const f = fases.get(sub.pdca) || { pdca: sub.pdca, logroNum: 0, logroDen: 0, puntaje: 0, peso: 0 };
-      f.logroDen += 1;
-      f.peso += pesoSub;
-      if (valoracion) { f.logroNum += s; f.puntaje += pesoSub * s; }
-      fases.set(sub.pdca, f);
     }
 
-    if (subs.length === 0) continue; // elemento sin nada en alcance
-
-    const logro = denom > 0 ? sumaS / denom : null;          // T
-    const puntajeElemento = logro != null ? pesoEl * logro : 0; // V = L * T
+    const aplica = denom > 0; // el elemento tiene al menos un subelemento aplicable
+    const logro = aplica ? sumaS / denom : null;              // T
+    const puntajeElemento = aplica ? pesoEl * logro : 0;      // V = L * T
 
     elementos.push({
       codigo: el.codigo,
       nombre: el.nombre,
       pdca: el.pdca,
       pesoElemento: pesoEl,                    // L
-      logro,                                   // T (0..1)
-      estado: estadoDesdeLogro(logro),         // U
+      aplica,                                  // false si todos sus subelementos son NA
+      logro,                                   // T (0..1) o null
+      estado: aplica ? estadoDesdeLogro(logro) : 'No aplica',
       puntajeElemento,                         // V
       totalSubelementos: subs.length,
+      subelementosAplicables: denom,
+      subelementosNA: naCount,
       subelementosValorados: valorados,
       subelementos: subs,
     });
   }
 
-  const pesoIncluidoTotal = elementos.reduce((a, e) => a + e.pesoElemento, 0);
-  const puntajeObtenidoTotal = elementos.reduce((a, e) => a + e.puntajeElemento, 0);
+  // El total sólo considera los elementos que aplican (con al menos 1 subelemento no-NA)
+  const conScore = elementos.filter((e) => e.aplica);
+  const pesoIncluidoTotal = conScore.reduce((a, e) => a + e.pesoElemento, 0);
+  const puntajeObtenidoTotal = conScore.reduce((a, e) => a + e.puntajeElemento, 0);
   const totalAuditoria = pesoIncluidoTotal > 0 ? puntajeObtenidoTotal / pesoIncluidoTotal : null;
 
   const totalSub = elementos.reduce((a, e) => a + e.totalSubelementos, 0);
