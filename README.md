@@ -137,6 +137,7 @@ Todas las rutas (excepto login) requieren `Authorization: Bearer <token>`.
 | POST | `/api/audits/:id/reopen` | auditor dueño | Reabrir |
 | DELETE | `/api/audits/:id` | auditor dueño | Eliminar |
 | GET | `/api/compare?ids=1,2,3` | jefa | Payload comparativo (2 a 6 auditorías) |
+| GET | `/api/reportes/{auditorias\|elementos\|subelementos\|fases}` | clave de reportes | Datos planos para BI — ver sección 10 |
 
 ---
 
@@ -241,7 +242,44 @@ Para reiniciar los datos de ejemplo en producción: `Storage → Data → Query`
 `TRUNCATE audit_items, audits, companies, users RESTART IDENTITY CASCADE;`, luego
 redeploy (o correr `npm run seed` localmente apuntando `DATABASE_URL` a esa base).
 
-## 9. Notas de seguridad (entorno productivo)
+## 9. Conectar con Power BI (u otra herramienta de BI)
+
+La app expone 4 endpoints de **sólo lectura**, en JSON plano y ya calculados (misma
+lógica que la app — ver `server/scoring.js`), pensados para "Obtener datos → Web" de
+Power BI. No requieren usuario/contraseña, sólo una clave.
+
+| Endpoint | Granularidad |
+|---|---|
+| `/api/reportes/auditorias` | 1 fila por auditoría (empresa, auditor, fecha, % total, estado, avance) |
+| `/api/reportes/elementos` | 1 fila por auditoría × elemento (peso, % logro, puntaje, estado, aplica) |
+| `/api/reportes/subelementos` | 1 fila por auditoría × subelemento (el más granular: valoración, observación) |
+| `/api/reportes/fases` | 1 fila por auditoría × fase PDCA |
+
+**Habilitarlos:** agregar la variable de entorno `REPORTS_API_KEY` (un valor propio,
+largo y aleatorio) en Vercel → Settings → Environment Variables, y redeploy. Sin esa
+variable, los endpoints responden `503` (deshabilitados por defecto).
+
+**Desde Power BI Desktop:**
+1. *Obtener datos* → *Web*.
+2. Pegar la URL con la clave, por ejemplo:
+   `https://sgeo-auditorias.vercel.app/api/reportes/subelementos?key=<REPORTS_API_KEY>`
+3. Power Query trae una lista de objetos → botón **"A tabla"** → expandir la columna →
+   quedan las columnas ya tipadas.
+4. Repetir para los otros 3 endpoints y relacionarlos por `auditoria_id` en el modelo
+   (Vista de modelo → arrastrar relaciones), o usarlos sueltos según el reporte.
+5. *Cerrar y aplicar*.
+
+**Actualización programada (Power BI Service):** al publicar el reporte, en el dataset
+→ *Configuración → Credenciales de origen de datos* → método **Anónimo** (la clave ya
+va en la URL). Como el endpoint es HTTPS público, no hace falta gateway de datos local.
+
+Alternativa (no recomendada): conectar Power BI directo a la base Postgres con su
+conector nativo. Es posible, pero la lógica de puntaje (fases, `NA`, alcance parcial)
+tendría que reescribirse en SQL/DAX y mantenerse igual que `server/scoring.js` a mano.
+
+---
+
+## 10. Notas de seguridad (entorno productivo)
 
 Esta entrega está pensada para uso interno / demo. Antes de exponerla:
 

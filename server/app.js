@@ -246,6 +246,90 @@ app.get('/api/compare', auth, soloJefa, wrap(async (req, res) => {
   });
 }));
 
+/* ─────────────── Reportes (Power BI / BI) ───────────────
+ * Endpoints de sólo lectura, en JSON plano, pensados para "Obtener datos → Web" de
+ * Power BI (o cualquier herramienta de BI). Usan la MISMA lógica de server/scoring.js
+ * que el resto de la app — no hay cálculos duplicados.
+ * Protegidos por una clave (no requieren login de usuario): ?key=... o header x-api-key.
+ * Se habilitan sólo si existe la variable de entorno REPORTS_API_KEY. */
+const REPORTS_KEY = process.env.REPORTS_API_KEY || null;
+function reportAuth(req, res, next) {
+  if (!REPORTS_KEY)
+    return res.status(503).json({ error: 'Reportes no habilitados: falta configurar REPORTS_API_KEY en el servidor' });
+  const key = req.query.key || req.headers['x-api-key'] ||
+    (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
+  if (key !== REPORTS_KEY) return res.status(401).json({ error: 'Clave de reportes inválida' });
+  next();
+}
+
+/** Todas las auditorías (de todos los auditores) con su resultado calculado. */
+async function allAuditsFull() {
+  const rows = await many(
+    `SELECT a.*, c.nombre AS company_nombre, c.sector AS company_sector, c.ubicacion AS company_ubicacion
+     FROM audits a JOIN companies c ON c.id = a.company_id ORDER BY a.id`
+  );
+  for (const a of rows) {
+    a.items = await many('SELECT se, valoracion, observacion FROM audit_items WHERE audit_id = $1 ORDER BY se', [a.id]);
+    a.resultado = calcularResultado(estructura, a.items);
+  }
+  return rows;
+}
+
+app.get('/api/reportes/auditorias', reportAuth, wrap(async (_req, res) => {
+  const audits = await allAuditsFull();
+  res.json(audits.map((a) => ({
+    auditoria_id: a.id,
+    empresa: a.company_nombre, sector: a.company_sector, ubicacion: a.company_ubicacion,
+    auditor: a.auditor_nombre, fecha: a.fecha, estado: a.estado, alcance: a.alcance_texto,
+    total_pct: a.resultado.total.porcentaje, total_estado: a.resultado.total.estado,
+    total_puntaje: a.resultado.total.puntajeSobre100, total_peso_incluido: a.resultado.total.pesoIncluido,
+    avance_pct: a.resultado.avance.porcentaje,
+    subelementos_total: a.resultado.avance.totalSubelementos,
+    subelementos_valorados: a.resultado.avance.subelementosValorados,
+    creada: a.created_at, cerrada: a.closed_at,
+  })));
+}));
+
+app.get('/api/reportes/elementos', reportAuth, wrap(async (_req, res) => {
+  const audits = await allAuditsFull();
+  const rows = [];
+  for (const a of audits) for (const e of a.resultado.elementos) rows.push({
+    auditoria_id: a.id, empresa: a.company_nombre, auditor: a.auditor_nombre, fecha: a.fecha, estado_auditoria: a.estado,
+    elemento_codigo: e.codigo, elemento_nombre: e.nombre, fase_pdca: e.pdca,
+    peso: e.pesoElemento, aplica: e.aplica, logro_pct: e.logro != null ? e.logro * 100 : null,
+    estado_elemento: e.estado, puntaje: e.puntajeElemento,
+    subelementos_total: e.totalSubelementos, subelementos_aplicables: e.subelementosAplicables,
+    subelementos_na: e.subelementosNA, subelementos_valorados: e.subelementosValorados,
+  });
+  res.json(rows);
+}));
+
+app.get('/api/reportes/subelementos', reportAuth, wrap(async (_req, res) => {
+  const audits = await allAuditsFull();
+  const rows = [];
+  for (const a of audits) {
+    const obs = new Map(a.items.map((it) => [it.se, it.observacion]));
+    for (const e of a.resultado.elementos) for (const s of e.subelementos) rows.push({
+      auditoria_id: a.id, empresa: a.company_nombre, auditor: a.auditor_nombre, fecha: a.fecha, estado_auditoria: a.estado,
+      elemento_codigo: e.codigo, se: s.se, subelemento: s.detalle, fase_pdca: s.pdca,
+      valoracion: s.valoracion, evaluacion_final_pct: s.evaluacionFinal != null ? s.evaluacionFinal * 100 : null,
+      observacion: obs.get(s.se) || null,
+    });
+  }
+  res.json(rows);
+}));
+
+app.get('/api/reportes/fases', reportAuth, wrap(async (_req, res) => {
+  const audits = await allAuditsFull();
+  const rows = [];
+  for (const a of audits) for (const f of a.resultado.fases) rows.push({
+    auditoria_id: a.id, empresa: a.company_nombre, fecha: a.fecha,
+    fase_pdca: f.pdca, peso: f.peso, puntaje: f.puntaje,
+    logro_pct: f.logro != null ? f.logro * 100 : null, estado: f.estado,
+  });
+  res.json(rows);
+}));
+
 /* ─────────────── Estáticos + SPA fallback ─────────────── */
 app.use(express.static(PUBLIC_DIR, {
   setHeaders: (r, p) => { if (/\.(css|js|html)$/.test(p)) r.setHeader('Cache-Control', 'no-store'); },
